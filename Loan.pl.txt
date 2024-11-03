@@ -1,0 +1,75 @@
+﻿#!/usr/bin/perl
+# Date:
+# Author:
+# This PERL program prints a table of the monthly payments for a
+# loan, given the interest rate, loan amount and payment
+#  amount
+#
+
+
+$i=0;
+while ( $i < $#ARGV) {                # process args
+   if ( @ARGV[$i] eq "-r" ) {
+          $RATE=@ARGV[++$i];                 # interest rate
+   } else {
+          if ( @ARGV[$i] eq "-a" ) {
+             $AMOUNT=@ARGV[++$i];             # loan amount
+          } else {
+             if ( @ARGV[$i] eq "-p" ) {
+                $PAYMENT=@ARGV[++$i];        # payment amount
+             } else {
+                print "Unknown argument (@ARGV[$i])\n";
+                exit
+             }
+          }
+   }
+   $i++;
+}
+
+
+if ($AMOUNT == 0 || $RATE == 0 || $PAYMENT == 0) {
+   print "Please specify -r the rate, -a the loan amount, -p the payment\n";
+   exit
+}
+
+
+print "Original balance: \$$AMOUNT\n";
+print "Interest rate:         ${RATE}%\n";
+print "Monthly payment:  \$$PAYMENT\n";
+print "\n";
+print "Month\tPayment\tInterest\tPrincipal\tBalance\n\n";
+
+
+$month=1;
+$rate=$RATE/12/100;           # get actual monthly percentage rate
+$balance=$AMOUNT;
+$payment=$PAYMENT;
+
+
+while ($balance > 0) {
+# round up interest amount
+   $interest=roundUpAmount($rate * $balance);
+   $principal=roundUpAmount($payment - $interest);
+   if ( $balance < $principal ) {         # last payment
+          $principal=$balance;             # don't pay too much!
+          $payment=$principal + $interest;
+   }
+   $balance = roundUpAmount($balance - $principal);
+   print "$month\t\$$payment\t\$$interest\t\t\$$principal\t\t\$$balance\n";
+   $month++;
+}
+
+
+sub roundUpAmount {
+#
+# in: floating point monetary value
+# out: value rounded (and truncated) to the nearest cent
+#
+   $value=$_[0];
+
+
+   $newvalue = ( int ( ( $value * 100 ) +.5 ) ) / 100;
+
+
+   return ($newvalue);
+}

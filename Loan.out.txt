@@ -1,0 +1,6 @@
+﻿Original balance: $
+Interest rate:         %
+Monthly payment:  $
+
+
+Month        Payment        Interest        Principal        Balance
